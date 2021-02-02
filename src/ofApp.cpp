@@ -12,14 +12,14 @@ int LSB_1 = -1;
 int line = -1;
 int WAIT_LSB_1 = 0;
 
-int available_a = 0;
-int available_b = 0;
+//bool available_a = false;
+//bool available_b = false;
 
 vector<int> opts ={0,0,0,0};
 vector<int> pos = {-1, -1, -1, -1};
 vector<int> last_pos = {0, 0, 0, 0};
-vector<int> new11 = {0, 0, 0, 0};
-vector<int> line_complete = {0, 0, 0, 0};
+vector<bool> new11 = {false, false, false, false};
+vector<bool> line_complete = {false, false, false, false};
 vector<bool> reset_once = {false, false, false, false};
 
 vector<vector<int>> a2 = { {1, 2, 3}, {4, 5, 6}, {7, 8, 9} };
@@ -314,7 +314,7 @@ void ofApp::buildString(string c, int pLine){
             last_pos[pLine]++;
 
             if ( last_pos[pLine] == MAXLEN )
-                new11[pLine] = 1;
+                new11[pLine] = true;
         }
 
         if ( pos[pLine] > 0 ) {
@@ -328,7 +328,7 @@ void ofApp::buildString(string c, int pLine){
     }
 
     if ( pos[pLine] == MAXLEN ){
-        new11[pLine] = 1;
+        new11[pLine] = true;
     }
 
     last_pos[pLine] = pos[pLine];
@@ -348,15 +348,15 @@ void ofApp::FindStart ( int  line_idx ){
         // String not final yet, due to marker confusion?
         if ( line_static_str[line_idx] != line_static_str_SHADOW[line_idx] ) {
             line_static_str[line_idx] = line_static_str_SHADOW[line_idx];
-            line_complete[line_idx] = 0;
+            line_complete[line_idx] = false;
 
         } else {
-            line_complete[line_idx] = 1;
+            line_complete[line_idx] = true;
 
             // If line 0 has been completed reset line 1 once to ensure that track and artist match. Otherwise a track could get the wrong artist!
             if ( line_idx == 0 ) {
                 if ( reset_once[1] == false ) {
-                    line_complete[1] = 0;
+                    line_complete[1] = false;
                     reset_once[1] = true;
                 }
                 else
@@ -366,7 +366,7 @@ void ofApp::FindStart ( int  line_idx ){
             // If line 1 has been completed reset line 0 once to ensure that track and artist match. Otherwise a track could get the wrong artist!
             if ( line_idx == 1 ) {
                 if ( reset_once[0] == false ) {
-                    line_complete[0] = 0;
+                    line_complete[0] = false;
                     reset_once[0] = true;
                 }
                 else
@@ -376,7 +376,7 @@ void ofApp::FindStart ( int  line_idx ){
             // If line 2 has been completed reset line 3 once to ensure that track and artist match. Otherwise a track could get the wrong artist!
             if ( line_idx == 2 ) {
                 if ( reset_once[3] == false ) {
-                    line_complete[3] = 0;
+                    line_complete[3] = false;
                     reset_once[3] = true;
                 }
                 else
@@ -386,15 +386,15 @@ void ofApp::FindStart ( int  line_idx ){
             // If line 3 has been completed reset line 2 once to ensure that track and artist match. Otherwise a track could get the wrong artist!
             if ( line_idx == 3 ) {
                 if ( reset_once[2] == false ) {
-                    line_complete[2] = 0;
+                    line_complete[2] = false;
                     reset_once[2] = true;
                 }
                 else
                     reset_once[2] = false;
             }
 
-            if ( line_complete[0] == 1 &&
-                line_complete[1] == 1 &&
+            if ( line_complete[0] == true &&
+                line_complete[1] == true &&
                 ( line_static_str_VISUAL[0] != line_static_str[0] ||
                 line_static_str_VISUAL[1] != line_static_str[1] )   ) {
                 line_static_str_VISUAL[0] = line_static_str[0];
@@ -403,12 +403,12 @@ void ofApp::FindStart ( int  line_idx ){
                 ofLogNotice("Deck A");
                 ofLogNotice("Track: " + line_static_str[0]);
                 ofLogNotice("Artist: " + line_static_str[1]);
-                available_a = 1;
-                line_complete[0] = 0;
-                line_complete[1] = 0;
+                //available_a = true;
+                line_complete[0] = false;
+                line_complete[1] = false;
             }
-            else if (     line_complete[2] == 1 &&
-                line_complete[3] == 1 &&
+            else if (     line_complete[2] == true &&
+                line_complete[3] == true &&
                 ( line_static_str_VISUAL[2] != line_static_str[2] ||
                 line_static_str_VISUAL[3] != line_static_str[3] )  ) {
                 line_static_str_VISUAL[2] = line_static_str[2];
@@ -417,17 +417,17 @@ void ofApp::FindStart ( int  line_idx ){
                 ofLogNotice("Deck B");
                 ofLogNotice("Track: " + line_static_str[2]);
                 ofLogNotice("Artist: " + line_static_str[3]);
-                available_b = 1;
-                line_complete[2] = 0;
-                line_complete[3] = 0;
+                //available_b = true;
+                line_complete[2] = false;
+                line_complete[3] = false;
             }
         }
         line_static_str_SHADOW[line_idx] = "";
         
     } else {
-        if ( new11[line_idx] == 1 ) {
+        if ( new11[line_idx] == true ) {
             line_static_str_SHADOW[line_idx] += line_char_array[line_idx][MAXLEN];
-            new11[line_idx] = 0;
+            new11[line_idx] = false;
         }
     }
 }
