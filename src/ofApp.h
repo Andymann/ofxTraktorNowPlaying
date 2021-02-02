@@ -31,6 +31,11 @@ class ofApp : public ofBaseApp, public ofxMidiListener{
     
     void newMidiMessage(ofxMidiMessage& eventArgs);
     void setMidiPort(string pPortName);
+    void buildString(string c, int pLine);
+    void FindStart ( int line_idx );
+    string RemoveMultipleUnderscores ( string str );
+    
+    
     
 };
 
